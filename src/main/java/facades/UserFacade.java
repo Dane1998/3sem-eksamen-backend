@@ -25,6 +25,10 @@ public class UserFacade {
         }
         return instance;
     }
+    
+    private EntityManager getEntityManager() {
+        return emf.createEntityManager();
+    }
 
     public User getVeryfiedUser(String username, String password) throws AuthenticationException {
         EntityManager em; 
@@ -65,6 +69,35 @@ public class UserFacade {
         }
         return user;
     }
+    
+    public User deleteUser(String username) {
+        EntityManager em = getEntityManager();
+        User u = em.find(User.class, username);
+        if (u != null) {
+            try {
+                em.getTransaction().begin();
+                em.remove(u);
+                em.getTransaction().commit();
+            } finally {
+                em.close();
+            }
+        }
+        return u;
+    }
+    
+    public User edit(User username) {
+        EntityManager em = getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(username);
+            em.getTransaction().commit();
+            return username;
+        } finally {
+            em.close();
+        }
+    }
+    
+    
     public List<User> getAllUsers() {
         EntityManager em = emf.createEntityManager();
         try {
