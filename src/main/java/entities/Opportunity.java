@@ -1,6 +1,7 @@
 
 package entities;
 
+import dto.OpportunityDTO;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,28 +22,34 @@ import javax.persistence.TemporalType;
  * @author Dane
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "Opportunity.deleteAllRows", query = "DELETE from Opportunity")  
+})
 public class Opportunity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String name;
     private int amount;
     
-    @Temporal(TemporalType.DATE)
-    private Date closeDate;
     
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    
+    private int closeDate;
+    
+    @ManyToOne
     private Contact contact;
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    private OpportunityStatus opportunityStatus;
-    
-    @OneToMany(mappedBy = "opportunity", cascade = CascadeType.ALL)
-    private List<Task> task;
 
-    public Opportunity(String name, int amount, Date closeDate) {
+    public Opportunity(OpportunityDTO dto){
+        this.name = dto.getName();
+        this.amount = dto.getAmount();
+        this.closeDate = dto.getCloseDate();
+                
+    }
+    
+    public Opportunity(String name, int amount, int closeDate) {
         this.name = name;
         this.amount = amount;
         this.closeDate = closeDate;
@@ -48,6 +57,14 @@ public class Opportunity implements Serializable {
 
     public Opportunity() {
     }
+    
+    public void addContact (Contact contact){
+        this.contact = contact;
+        if(contact != null) {
+            contact.getOpportunity().add(this);
+        }
+    }
+    
 
     public String getName() {
         return name;
@@ -65,20 +82,20 @@ public class Opportunity implements Serializable {
         this.amount = amount;
     }
 
-    public Date getCloseDate() {
+    public int getCloseDate() {
         return closeDate;
     }
 
-    public void setCloseDate(Date closeDate) {
+    public void setCloseDate(int closeDate) {
         this.closeDate = closeDate;
     }
     
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

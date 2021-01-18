@@ -37,7 +37,7 @@ public class Contact implements Serializable {
     private String jobtitle;
     private String phone;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "contact")
     private List<Opportunity> opportunity;
 
     public Contact(String name, String email, String company, String jobtitle, String phone) {
@@ -46,6 +46,7 @@ public class Contact implements Serializable {
         this.company = company;
         this.jobtitle = jobtitle;
         this.phone = phone;
+        this.opportunity = new ArrayList();
     }
     
     public Contact(ContactDTO dto){
@@ -57,6 +58,27 @@ public class Contact implements Serializable {
     }
 
     public Contact() {
+    }
+    
+    public void addOpportunity(Opportunity opportunity){
+        this.opportunity.add(opportunity);
+        if(opportunity != null){
+            opportunity.addContact(this);
+        }
+    }
+    
+    public void removeOpportunity(Opportunity opportunity) {
+        if(opportunity != null){
+            this.opportunity.remove(opportunity);
+        }
+    }
+
+    public List<Opportunity> getOpportunity() {
+        return opportunity;
+    }
+
+    public void setOpportunity(List<Opportunity> opportunity) {
+        this.opportunity = opportunity;
     }
 
     public String getName() {
@@ -98,8 +120,6 @@ public class Contact implements Serializable {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    
-    
 
     public int getId() {
         return id;
