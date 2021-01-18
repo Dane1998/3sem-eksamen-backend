@@ -3,12 +3,17 @@ package entities;
 
 import dto.ContactDTO;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -25,12 +30,15 @@ public class Contact implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String name;
     private String email;
     private String company;
     private String jobtitle;
     private String phone;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "contact")
+    private List<Opportunity> opportunity;
 
     public Contact(String name, String email, String company, String jobtitle, String phone) {
         this.name = name;
@@ -93,11 +101,11 @@ public class Contact implements Serializable {
     
     
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

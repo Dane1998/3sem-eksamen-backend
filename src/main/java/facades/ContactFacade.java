@@ -61,7 +61,7 @@ public class ContactFacade {
         }
     }
     
-    public Contact getContactById(Long id ){
+    public Contact getContactById(int id ){
         EntityManager em = getEntityManager();        
         try{
             em.getTransaction().begin();
@@ -73,5 +73,31 @@ public class ContactFacade {
         }finally{
             em.close();
         }
+    }
+    
+    public ContactDTO deleteContact (int id){
+        EntityManager em = getEntityManager();
+        Contact contact = em.find(Contact.class, id);
+        try{
+            em.getTransaction().begin();
+            em.remove(contact);
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return new ContactDTO(contact);
+    }
+    
+    public ContactDTO updateContact (int id){
+        EntityManager em = getEntityManager();
+        Contact contact = em.find(Contact.class, id);
+        try{
+            em.getTransaction().begin();
+            em.merge(contact);
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return new ContactDTO(contact);
     }
 }

@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -70,11 +71,28 @@ public class ContactResource {
     @Path("getContactById/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String findContactById(@PathParam("id")Long id) {
+    public String findContactById(@PathParam("id")int id) {
         Contact c = FACADE.getContactById(id);
         return new Gson().toJson(c);
     }
     
+    @Path("remove/{id}")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public String removeContactById(@PathParam("id")int id) {
+        ContactDTO c = FACADE.deleteContact(id);
+        return new Gson().toJson(c);
+    }
+    
+    @Path("update/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String updateContactById(@PathParam("id")int id){
+        ContactDTO c = FACADE.updateContact(id);
+        return new Gson().toJson(c);
+    }        
+            
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
