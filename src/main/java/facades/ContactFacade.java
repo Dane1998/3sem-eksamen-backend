@@ -6,6 +6,7 @@ import dto.ContactsDTO;
 import entities.Contact;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -55,6 +56,20 @@ public class ContactFacade {
         EntityManager em = getEntityManager();
         try{
             return new ContactsDTO(em.createNamedQuery("Contact.getAllContacts").getResultList());
+        }finally{
+            em.close();
+        }
+    }
+    
+    public Contact getContactById(Long id ){
+        EntityManager em = getEntityManager();        
+        try{
+            em.getTransaction().begin();
+            TypedQuery<Contact> query = em.createQuery("SELECT c FROM Contact c WHERE c.id = :id", Contact.class);
+            query.setParameter("id", id);
+            Contact contact = query.getSingleResult();
+            return contact;
+            
         }finally{
             em.close();
         }

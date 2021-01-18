@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
 import dto.ContactsDTO;
+import entities.Contact;
 import facades.ContactFacade;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.Context;
@@ -19,6 +20,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import utils.EMF_Creator;
 
@@ -64,8 +66,14 @@ public class ContactResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void putJson(String content) {
     }
-    
-    
+
+    @Path("getContactById/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String findContactById(@PathParam("id")Long id) {
+        Contact c = FACADE.getContactById(id);
+        return new Gson().toJson(c);
+    }
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
