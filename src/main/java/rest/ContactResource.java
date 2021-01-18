@@ -8,6 +8,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
+import dto.ContactsDTO;
 import facades.ContactFacade;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.Context;
@@ -46,11 +47,13 @@ public class ContactResource {
      * Retrieves representation of an instance of rest.ContactResource
      * @return an instance of java.lang.String
      */
+    @Path("allContacts")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJson() {
-        //TODO return proper representation object
-        throw new UnsupportedOperationException();
+    public String getAllContacts() {
+        ContactsDTO contacts = FACADE.getAllContacts();
+        return GSON.toJson(contacts.getAll());
+                
     }
 
     /**
@@ -61,6 +64,8 @@ public class ContactResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void putJson(String content) {
     }
+    
+    
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
