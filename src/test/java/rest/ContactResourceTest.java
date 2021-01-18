@@ -1,8 +1,11 @@
 package rest;
 
+import com.google.gson.JsonObject;
+import dto.ContactDTO;
 import entities.Contact;
 import entities.Role;
 import entities.User;
+import facades.ContactFacade;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -23,7 +26,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static rest.LoginEndpointTest.startServer;
 //Uncomment the line below, to temporarily disable this test
-@Disabled
+//@Disabled
 
 public class ContactResourceTest {
 
@@ -32,6 +35,7 @@ public class ContactResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
+    
     
     private Contact c1;
     private Contact c2;
@@ -102,12 +106,25 @@ public class ContactResourceTest {
     //This is how we hold on to the token after login, similar to that a client must store the token somewhere
     private static String securityToken;
     
+    private static void login(String role, String password) {
+        String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+        securityToken = given()
+                .contentType("application/json")
+                .body(json)
+                //.when().post("/api/login")
+                .when().post("/login")
+                .then()
+                .extract().path("token");
+    }
+    
+    @Disabled
     @Test
     public void testServerIsUp() {
         given().when().get("/contact").then().statusCode(200);
     }
 
     //This test assumes the database contains two rows
+    @Disabled
     @Test
     public void testContact() throws Exception {
         given()
@@ -117,5 +134,33 @@ public class ContactResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode());
                
     }
-  
+    
+    @Test
+    public void testAddContact(){
+        login("user", "test");
+        given()
+                .contentType("application/json")
+                .body(new ContactDTO("Daniel", "cph@cph.dk", "DinTøjmand", "CEO", "12345678"))
+                .header("x-access-token", securityToken)
+                .when()
+                .post("/contact")
+                .then()
+                .body("name", equalTo("Daniel"));
+                
+    }
+    
+    @Disabled
+    @Test 
+    public void testDeleteContact(){
+        login("user", "test");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .when()
+                .delete("/contact/remove" + c1.getId())
+                .then()
+                .statusCode(HttpStatus.OK_200.getStatusCode());
+    }
+    
+           
 }

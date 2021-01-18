@@ -22,7 +22,7 @@ public class ContactFacade {
     private static EntityManagerFactory emf;
 
     //Private Constructor to ensure Singleton
-    private ContactFacade() {
+    public ContactFacade() {
     }
 
     /**
